@@ -3,6 +3,6 @@
 build
 .dep
 
-# User 
-.vscode/*
+# User Workspaces
+.vscode/.cortex*
 *.code-workspace

@@ -19,12 +19,12 @@
             "preLaunchTask": "upload", // runs make upload to compile and upload latest code
             "linux": {
                 "MIMode": "gdb",
-                "MIDebuggerPath": "/usr/bin/arm-none-eabi-gdb",
+                "MIDebuggerPath": "/usr/bin/arm-none-eabi-gdb", // Change this to the path of your gdb installation
                 "debugServerPath": "openocd"
             },
             "osx": {
                 "MIMode": "gdb",
-                "MIDebuggerPath": "/usr/local/bin/arm-none-eabi-gdb",
+                "MIDebuggerPath": "/usr/local/bin/arm-none-eabi-gdb", // Change this to the path of your gdb installation
                 "debugServerPath": "openocd"
             },
             "windows": {

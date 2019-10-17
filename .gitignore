@@ -5,4 +5,4 @@ build
 
 # User Workspaces
 .vscode/.cortex*
-*.code-workspace
+#*.code-workspace

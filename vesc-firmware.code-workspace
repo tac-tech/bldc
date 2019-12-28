@@ -4,5 +4,16 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"encoder.h": "c",
+			"hal.h": "c",
+			"stm32f4xx_conf.h": "c",
+			"ch.h": "c",
+			"board.h": "c",
+			"osal.h": "c",
+			"comm_can.h": "c",
+			"conf_general.h": "c"
+		}
+	}
 }

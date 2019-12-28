@@ -3,16 +3,20 @@
         {
             "name": "Linux",
             "includePath": [
-                "./",
-                "./ChibiOS_3.0.2/os/rt/include/",
-                "./ChibiOS_3.0.2/os/rt/ports/",
-                "./ChibiOS_3.0.2/os/rt/templates/"
+                "${workspaceRoot}/**",
+                "${workspaceRoot}"
             ],
+            "browse": {
+                "path": [
+                    "${workspaceRoot}/**"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            },
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "${default}"
+            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4

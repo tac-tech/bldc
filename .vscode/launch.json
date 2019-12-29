@@ -7,29 +7,13 @@
     "configurations": [
         {
             "name": "VESC Debug",
-            "cwd": "${workspaceRoot}",
-            "executable": "./build/BLDC_4_ChibiOS.elf",
-            "request": "launch",
             "type": "cortex-debug",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceRoot}/build/BLDC_4_ChibiOS.elf",
             "servertype": "openocd",
-            // "device": "STM32F405RG",
-            "configFiles": [
-                "stm32-vesc-openocd-vscode.cfg"
-            ],
-            "preLaunchTask": "upload", // runs make upload to compile and upload latest code
-            "linux": {
-                "MIMode": "gdb",
-                "MIDebuggerPath": "/usr/bin/arm-none-eabi-gdb", // Change this to the path of your gdb installation
-                "debugServerPath": "openocd"
-            },
-            "osx": {
-                "MIMode": "gdb",
-                "MIDebuggerPath": "/usr/local/bin/arm-none-eabi-gdb", // Change this to the path of your gdb installation
-                "debugServerPath": "openocd"
-            },
-            "windows": {
-                
-            }
-        }
+            "device": "stm32f4x",
+            "configFiles": ["${workspaceFolder}/stm32-vesc-openocd-vscode.cfg"]
+        }        
     ]
 }

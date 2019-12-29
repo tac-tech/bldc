@@ -14,57 +14,6 @@
             "servertype": "openocd",
             "device": "stm32f4x",
             "configFiles": ["${workspaceFolder}/stm32-vesc-openocd-vscode.cfg"]
-        },
-        {
-            "name": "VESC Debug Test",
-            "cwd": "${workspaceFolder}",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceRoot}/build/BLDC_4_ChibiOS.elf",
-            "stopAtEntry": false,
-            "debugServerArgs": "-f ${workspaceFolder}/stm32-vesc-openocd-vscode.cfg",
-            "preLaunchTask": "upload",
-            "setupCommands": [
-                { "text": "-target-select remote localhost:3333", "description": "connect to target", "ignoreFailures": false },
-                { "text": "-file-exec-and-symbols ${workspaceRoot}/build/BLDC_4_ChibiOS.elf", "description": "load file", "ignoreFailures": false},
-                { "text": "-interpreter-exec console \"monitor endian little\"", "ignoreFailures": false },
-                { "text": "-interpreter-exec console \"monitor reset\"", "ignoreFailures": false },
-                { "text": "-interpreter-exec console \"monitor halt\"", "ignoreFailures": false },
-                { "text": "-interpreter-exec console \"monitor arm semihosting enable\"", "ignoreFailures": false },
-                { "text": "-target-download", "description": "flash target", "ignoreFailures": false }
-            ],
-            "linux": {
-                "MIMode": "gdb",
-                "miDebuggerPath": "/usr/bin/arm-none-eabi-gdb",
-                "debugServerPath": "openocd"
-            },
-            "osx": {
-                "MIMode": "gdb",
-                "miDebuggerPath": "/usr/bin/arm-none-eabi-gdb",
-                "debugServerPath": "openocd"
-            },
-            "windows": {
-
-            }
-        },
-        {
-            "name": "VESC Debug Test 2",
-            "type": "cppdbg",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "program": "${workspaceRoot}/build/BLDC_4_ChibiOS.elf",
-            "stopAtEntry": true,
-            "setupCommands": [
-                {"text": "-target remote localhost:3333"},
-                {"text": "-symbol-file ${workspaceFolder}/stm32-vesc-openocd-vscode.cfg"},
-                {"text": "-monitor reset"}
-            ],
-            "linux": {
-                "MIMode": "gdb",
-                "miDebuggerPath": "/usr/bin/arm-none-eabi-gdb",
-                "debugServerPath": "openocd"
-            },
-        },
-        
+        }        
     ]
 }

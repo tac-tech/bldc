@@ -13,7 +13,10 @@
             "executable": "${workspaceRoot}/build/BLDC_4_ChibiOS.elf",
             "servertype": "openocd",
             "device": "stm32f4x",
-            "configFiles": ["${workspaceFolder}/stm32-vesc-openocd-vscode.cfg"]
-        }        
+            "configFiles": ["${workspaceFolder}/stm32-vesc-openocd-vscode.cfg"],
+            "linux": {
+                "preLaunchTask": "build"
+            }
+        }       
     ]
 }

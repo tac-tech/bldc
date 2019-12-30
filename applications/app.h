@@ -21,6 +21,7 @@
 #define APP_H_
 
 #include "conf_general.h"
+#include "app_maverick.h"
 
 // Functions
 const app_configuration* app_get_configuration(void);

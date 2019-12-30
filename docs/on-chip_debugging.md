@@ -42,7 +42,8 @@ If you do not have anything additional in your *launch.json* file, your file sho
 }
 ```
 ## Testing
-1. To test the debugger, place a breakpoint in your code. Then, click on the *debug* tab, or hit *CTRL+ALT+D* on your keyboard.
-2. At the top of the *debug* tab, click the carrot for the dropdown menu (next to *DEBUG AND RUN*) and select the name of your configuration. The name from the example above is "VESC Debug"
-3. Ensure your VESC is properly connected to your computer using the ST-Link. If you need help doing this, please see the following link and scroll down to **Software Installation and Configuration Tool**: http://vedder.se/2015/01/vesc-open-source-esc/ 
-3. Select the green RUN button next to the dropdown menu. This should open up the debug menu and your bottom bar should turn orange (as long as you do not have a theme installed which changes this color)
+1. Ensure you have built your code, so the latest executable is used.
+2. To test the debugger, place a breakpoint in your code. Then, click on the *debug* tab, or hit *CTRL+ALT+D* on your keyboard.
+3. At the top of the *debug* tab, click the carrot for the dropdown menu (next to *DEBUG AND RUN*) and select the name of your configuration. The name from the example above is "VESC Debug"
+4. Ensure your VESC is properly connected to your computer using the ST-Link. If you need help doing this, please see the following link and scroll down to **Software Installation and Configuration Tool**: http://vedder.se/2015/01/vesc-open-source-esc/ 
+5. Select the green RUN button next to the dropdown menu. This should open up the debug menu and your bottom bar should turn orange (as long as you do not have a theme installed which changes this color)

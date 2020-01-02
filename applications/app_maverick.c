@@ -12,12 +12,58 @@
 // Private variables
 static volatile app_configuration config;
 static volatile maverick_motor_type motor_type;
+static volatile bool is_running = false;
+static volatile bool stop_now = true;
 
+// Define Threads
+static THD_FUNCTION(maverick_drive_thread, arg);
+static THD_WORKING_AREA(maverick_drive_thread_wa, 2048);
+static THD_FUNCTION(maverick_steering_comms_thread, arg);
+static THD_WORKING_AREA(maverick_steering_comms_thread_wa, 2048);
+static THD_FUNCTION(maverick_steering_controls_thread, arg);
+static THD_WORKING_AREA(maverick_steering_controls_thread_wa, 2048);
+
+
+static THD_FUNCTION(maverick_drive_thread, arg){
+    (void)arg;
+    chRegSetThreadName("MAVERICK_DRIVE");
+    is_running = true;
+    commands_printf("Drive thread started!");
+    while (!stop_now){
+        chThdSleepMilliseconds(50);
+        timeout_reset();
+    }
+    commands_printf("Drive thread finished!");
+    is_running = false;
+}
+
+static THD_FUNCTION(maverick_steering_comms_thread, arg){
+    (void)arg;
+    chRegSetThreadName("MAVERICK_STEERING_COMMS");
+    is_running = true;
+    while (!stop_now){
+
+        chThdSleepMilliseconds(50);
+        timeout_reset();
+    }
+    is_running = false;
+}
+
+static THD_FUNCTION(maverick_steering_controls_thread, arg){
+    (void) arg;
+    chRegSetThreadName("MAVERICK_STEERING_CONTROLS");
+    is_running = true;
+    while(!stop_now) {
+        chThdSleepMilliseconds(50);
+        timeout_reset();
+    }
+    is_running = false;
+}
 
 void maverick_configure(app_configuration *conf){
     config = *conf;
     commands_printf("%d", config.controller_id);
-    if (config.controller_id > min_motor_id){             // 
+    if (config.controller_id > min_motor_id){
         if (config.controller_id % 2 == 0){     // if even, then a steering motor
             motor_type = STEERING;
         } else {                                // if odd, then a drive motor
@@ -33,9 +79,17 @@ void maverick_init(app_configuration *config){
     switch(motor_type){
         case DRIVE:
             commands_printf("Drive");
+            stop_now = false;
+            chThdCreateStatic(maverick_drive_thread_wa, sizeof(maverick_drive_thread_wa),
+                            NORMALPRIO, maverick_drive_thread, NULL);
             break;
         case STEERING:
             commands_printf("Steering");
+            stop_now = false;
+            chThdCreateStatic(maverick_steering_comms_thread_wa, sizeof(maverick_steering_comms_thread_wa),
+                            NORMALPRIO, maverick_steering_comms_thread, NULL);
+            chThdCreateStatic(maverick_steering_controls_thread_wa, sizeof(maverick_steering_controls_thread_wa),
+                            NORMALPRIO, maverick_steering_controls_thread, NULL);
             break;
         default:
             commands_printf("Default");
@@ -43,8 +97,10 @@ void maverick_init(app_configuration *config){
     }
 }
 
-void maverick_stop(){
-    // TODO: Implement
+void maverick_stop() {
     motor_type = NONE;
-    return;
+    stop_now = true;
+    while (is_running){
+        chThdSleepMilliseconds(10);
+    }
 }

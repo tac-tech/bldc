@@ -49,6 +49,8 @@ const app_configuration* app_get_configuration(void) {
 void app_set_configuration(app_configuration *conf) {
 	appconf = *conf;
 
+	maverick_stop();
+
 	app_ppm_stop();
 	app_adc_stop();
 	app_uartcomm_stop();

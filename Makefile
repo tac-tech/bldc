@@ -110,6 +110,8 @@ include nrf/nrf.mk
 include libcanard/canard.mk
 include imu/imu.mk
 include blackmagic/blackmagic.mk
+include encoders/encoders.mk
+include comms/comms.mk
 
 # Define linker script file here
 LDSCRIPT= ld_eeprom_emu.ld
@@ -156,6 +158,8 @@ CSRC = $(STARTUPSRC) \
        i2c_bb.c \
        virtual_motor.c \
        $(HWSRC) \
+       $(ENCSRC) \
+       $(COMMSSRC) \
        $(APPSRC) \
        $(NRFSRC) \
        $(CANARDSRC) \
@@ -196,6 +200,8 @@ INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          mcconf \
          appconf \
          $(HWINC) \
+         $(ENCINC) \
+         $(COMMSINC) \
          $(APPINC) \
          $(NRFINC) \
          $(CANARDINC) \

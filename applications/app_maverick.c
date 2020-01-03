@@ -7,6 +7,7 @@
 #include <can.h>            // CAN interface
 #include <commands.h>       // Basic commands, including print to console
 
+#include "soft_spi.h"
 #include "app_maverick.h"
 
 // Private variables
@@ -52,12 +53,23 @@ static THD_FUNCTION(maverick_steering_comms_thread, arg){
 static THD_FUNCTION(maverick_steering_controls_thread, arg){
     (void) arg;
     chRegSetThreadName("MAVERICK_STEERING_CONTROLS");
+    spi_init();
+
     is_running = true;
     while(!stop_now) {
+        uint8_t in, out;
+        // Get the current encoder value
+        spi_transfer(&in, 0, 1);
+        // Calculate PID
+
+        // Set motor
+
+        // Thread sleep
         chThdSleepMilliseconds(50);
         timeout_reset();
     }
     is_running = false;
+    spi_deinit();
 }
 
 void maverick_configure(app_configuration *conf){
@@ -86,8 +98,8 @@ void maverick_init(app_configuration *config){
         case STEERING:
             commands_printf("Steering");
             stop_now = false;
-            chThdCreateStatic(maverick_steering_comms_thread_wa, sizeof(maverick_steering_comms_thread_wa),
-                            NORMALPRIO, maverick_steering_comms_thread, NULL);
+            // chThdCreateStatic(maverick_steering_comms_thread_wa, sizeof(maverick_steering_comms_thread_wa),
+            //                 NORMALPRIO, maverick_steering_comms_thread, NULL);
             chThdCreateStatic(maverick_steering_controls_thread_wa, sizeof(maverick_steering_controls_thread_wa),
                             NORMALPRIO, maverick_steering_controls_thread, NULL);
             break;

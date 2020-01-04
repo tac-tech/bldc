@@ -4,7 +4,7 @@
 #include "conf_general.h"
 
 #ifndef SPI_SAMPLE_RATE_HZ
-#define SPI_SAMPLE_RATE_HZ  200000 // 200KHz
+#define SPI_SAMPLE_RATE_HZ  200 000 // 200KHz
 #endif // SPI_SAMPLE_RATE_HZ
 
 #ifndef SPI_MISO_GPIO
@@ -53,6 +53,8 @@
 // Redefine pal functions for more readable code
 #define SET_SPI_CLK(x) palWritePad(SPI_CLK_GPIO, SPI_CLK_PIN, x)
 #define SET_SPI_MOSI(x) palWritePad(SPI_MOSI_GPIO, SPI_MOSI_PIN, x)
+#define SET_SPI_CS(x) palWritePad(SPI_CS_GPIO, SPI_CS_PIN, x)
+#define READ_SPI_MISO() palReadPad(SPI_MISO_GPIO, SPI_MISO_PIN)
 
 void spi_init(){
     // Set up pins
@@ -74,24 +76,34 @@ void spi_deinit(){
 
 void spi_transfer(uint8_t *in_buffer, const uint8_t *out_buffer, int length){
     for (int i = 0; i < length; i++) {
-        uint8_t send_byte = out_buffer ? out_buffer[i] : 0x00;
+        // uint8_t send_byte = out_buffer ? out_buffer[i] : 0x47;
+		uint8_t send_byte = 0x47;
         uint8_t receive_byte = 0;
-		// systime_t time = chVTGetSystemTimeX();
+		systime_t time = chVTGetSystemTimeX();
+		int read1, read2, read3;
         for (int bit = 0; bit < 8; bit++) {
             // Clock High
             SET_SPI_CLK(1);
-            // Write MOSI bit
-			spi_delay();
-            // time += MS2ST(1);
-			// chThdSleepUntil(time);
-            // Clock Low
-            SET_SPI_CLK(0);
-            // Read MISO bit
-			spi_delay();
-			// time += MS2ST(1);
-			// chThdSleepUntil(time);
-        }
+            
+			// Write MOSI bit and wait for switch
+            SET_SPI_MOSI((send_byte >> (7-bit)) & 1);
+            spi_delay(100);
 
+			// Clock Low
+            SET_SPI_CLK(0);
+
+            // Read MISO bit
+			read1 = READ_SPI_MISO();
+			spi_delay(1);
+			read2 = READ_SPI_MISO();
+			spi_delay(1);
+			read3 = READ_SPI_MISO();
+			receive_byte <<= 1;
+			if (utils_middle_of_3_int(read1, read2, read3)){
+				receive_byte |= 1;
+			}
+			spi_delay(100);
+        }
     }
 }
 
@@ -104,10 +116,10 @@ void spi_transfer_old(uint16_t *in_buf, const uint16_t *out_buf, int length) {
 			//palWritePad(HW_SPI_PORT_MOSI, HW_SPI_PIN_MOSI, send >> 15);
 			send <<= 1;
 
-			spi_delay();
+			spi_delay(4);
 			palSetPad(SPI_CLK_GPIO, SPI_CLK_PIN);
-			spi_delay();
-
+			spi_delay(4);
+			
 			int r1, r2, r3;
 			r1 = palReadPad(SPI_MISO_GPIO, SPI_MISO_PIN);
 			__NOP();
@@ -121,7 +133,7 @@ void spi_transfer_old(uint16_t *in_buf, const uint16_t *out_buf, int length) {
 			}
 
 			palClearPad(SPI_CLK_GPIO, SPI_CLK_PIN);
-			spi_delay();
+			spi_delay(4);
 		}
 
 		if (in_buf) {
@@ -138,8 +150,16 @@ void spi_end(void) {
 	palSetPad(SPI_CS_GPIO, SPI_CS_PIN); // set to 1
 }
 
-static void spi_delay(void) {
-	for (int i = 0; i < 4; i++){
+static void spi_wait_until(systime_t time) {
+	// FIXME: time may be wrapped around to 0, making system time always > than time
+	// Can cause read/write errors in SPI. Need to deal with this by checking if close to end of uint32_t
+	while (chVTGetSystemTimeX() < time){
+		spi_delay(1);
+	}
+}
+
+static void spi_delay(uint16_t length) {
+	for (int i = 0; i < length; i++){
 		__NOP();
 	}
 }

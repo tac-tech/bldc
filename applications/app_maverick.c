@@ -54,12 +54,14 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg){
     (void) arg;
     chRegSetThreadName("MAVERICK_STEERING_CONTROLS");
     spi_init();
-
+    // commands_printf("Microseconds per clock ticks: %");
     is_running = true;
     while(!stop_now) {
         uint8_t in, out;
+        spi_begin();
         // Get the current encoder value
         spi_transfer(&in, 0, 1);
+        spi_end();
         // Calculate PID
 
         // Set motor

@@ -7,6 +7,7 @@
 #include <can.h>            // CAN interface
 #include <commands.h>       // Basic commands, including print to console
 
+#include "encoders/orbis_brd10/br10_sp.h"
 #include "soft_spi.h"
 #include "app_maverick.h"
 
@@ -57,17 +58,16 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg){
     // commands_printf("Microseconds per clock ticks: %");
     is_running = true;
     while(!stop_now) {
-        uint8_t in, out;
-        spi_begin();
         // Get the current encoder value
-        spi_transfer(&in, 0, 1);
-        spi_end();
+        gen_response response = br10_getGeneralResponse();
+        commands_printf("Error: %d, Warning: %d", response.isError, response.isWarning);
+        commands_printf("Position: %d \n", response.position);
         // Calculate PID
 
         // Set motor
 
         // Thread sleep
-        chThdSleepMilliseconds(50);
+        chThdSleepMilliseconds(100);
         timeout_reset();
     }
     is_running = false;

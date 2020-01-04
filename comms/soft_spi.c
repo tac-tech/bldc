@@ -76,8 +76,7 @@ void spi_deinit(){
 
 void spi_transfer(uint8_t *in_buffer, const uint8_t *out_buffer, int length){
     for (int i = 0; i < length; i++) {
-        // uint8_t send_byte = out_buffer ? out_buffer[i] : 0x47;
-		uint8_t send_byte = 0x47;
+        uint8_t send_byte = out_buffer ? out_buffer[i] : 0xFF;
         uint8_t receive_byte = 0;
 		systime_t time = chVTGetSystemTimeX();
 		int read1, read2, read3;

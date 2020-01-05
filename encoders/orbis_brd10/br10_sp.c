@@ -33,7 +33,15 @@ speed_response br10_getSpeedResponse(){
 
 temp_response br10_getTempResponse(){
     uint8_t send_bytes[TEMP_RESPONSE_LENGTH] = {0x74};
-    return;
+    uint8_t received_bytes[TEMP_RESPONSE_LENGTH];
+
+    spi_comms(&received_bytes, &send_bytes, TEMP_RESPONSE_LENGTH);
+
+    temp_response response;
+    
+    response.gen_response = compute_gen(&received_bytes, TEMP_RESPONSE_LENGTH);
+    response.temp = (float)((received_bytes[2] << 8) | (received_bytes[3] & 0xFF)) / 10.0;
+    return response;
 }
 
 detailed_status br10_getDetailedStatusResponse(){

@@ -22,7 +22,7 @@
 
 // Default app configuration
 #ifndef APPCONF_CONTROLLER_ID
-#define APPCONF_CONTROLLER_ID				-1 // Controller id. -1 means it should be calculated from UUID.
+#define APPCONF_CONTROLLER_ID				22 // Controller id. -1 means it should be calculated from UUID.
 #endif
 #ifndef APPCONF_TIMEOUT_MSEC
 #define APPCONF_TIMEOUT_MSEC				1000
@@ -55,7 +55,7 @@
 // The default app is UART in case the UART port is used for
 // firmware updates.
 #ifndef APPCONF_APP_TO_USE
-#define APPCONF_APP_TO_USE					APP_UART
+#define APPCONF_APP_TO_USE					APP_CUSTOM
 #endif
 
 // PPM app configureation

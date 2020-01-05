@@ -6,7 +6,7 @@
 typedef struct {
     bool isError;
     bool isWarning;
-    float position;
+    double position;
     char crc;
 } gen_response;
 

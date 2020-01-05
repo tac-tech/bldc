@@ -1,5 +1,7 @@
 #include <hal.h>
 
+#include <commands.h>
+
 #include "soft_spi.h"
 #include "conf_general.h"
 
@@ -97,12 +99,12 @@ void spi_transfer(uint8_t *in_buffer, const uint8_t *out_buffer, int length){
 			read2 = READ_SPI_MISO();
 			spi_delay(1);
 			read3 = READ_SPI_MISO();
-			receive_byte <<= 1;
-			if (utils_middle_of_3_int(read1, read2, read3)){
-				receive_byte |= 1;
-			}
+
+			receive_byte = (receive_byte << 1) | 
+					(utils_middle_of_3_int(read1, read2, read3) > 0 ? 1 : 0);
 			spi_delay(100);
         }
+		in_buffer[i] = receive_byte;
     }
 }
 
@@ -157,7 +159,7 @@ static void spi_wait_until(systime_t time) {
 	}
 }
 
-static void spi_delay(uint16_t length) {
+void spi_delay(uint16_t length) {
 	for (int i = 0; i < length; i++){
 		__NOP();
 	}

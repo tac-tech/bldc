@@ -28,7 +28,19 @@ serial_no_response br10_getSerialNoResponse(){
 
 speed_response br10_getSpeedResponse(){
     uint8_t send_bytes[SPEED_RESPONSE_LENGTH] = {0x73};
-    return;
+    uint8_t received_bytes[SPEED_RESPONSE_LENGTH];
+
+    spi_comms(&received_bytes, &send_bytes, SPEED_RESPONSE_LENGTH);
+
+    speed_response response;
+
+    response.gen_response = compute_gen(&received_bytes, SPEED_RESPONSE_LENGTH);
+    bool isNegative = (received_bytes[2] & 0b10000000)  > 0 ? true : false;
+    response.speed = ((((received_bytes[2] & 0b01111111) << 8) | 
+                    (received_bytes[3] & 0xFF)) - 
+                    ((isNegative) ? (pow(2, 15)) : 0)) / 10.0;
+
+    return response;
 }
 
 temp_response br10_getTempResponse(){
@@ -40,7 +52,11 @@ temp_response br10_getTempResponse(){
     temp_response response;
     
     response.gen_response = compute_gen(&received_bytes, TEMP_RESPONSE_LENGTH);
-    response.temp = (float)((received_bytes[2] << 8) | (received_bytes[3] & 0xFF)) / 10.0;
+    bool isNegative = (received_bytes[2] & 0b10000000)  > 0 ? true : false;
+    response.temp = ((((received_bytes[2] & 0b01111111) << 8) | 
+                    (received_bytes[3] & 0xFF)) - 
+                    ((isNegative) ? (pow(2, 15)) : 0)) / 10.0;
+    
     return response;
 }
 

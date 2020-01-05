@@ -59,8 +59,8 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg){
     is_running = true;
     while(!stop_now) {
         // Get the current encoder value
-        temp_response response = br10_getTempResponse();
-        commands_printf("Temp: %f \n", response.temp);
+        speed_response response = br10_getSpeedResponse();
+        commands_printf("Speed: %f \n", response.speed);
         commands_printf("Position: %f \n", response.gen_response.position);
         
         // gen_response response = br10_getGeneralResponse();

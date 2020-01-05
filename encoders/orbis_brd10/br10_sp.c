@@ -23,7 +23,19 @@ gen_response br10_getGeneralResponse(){
 
 serial_no_response br10_getSerialNoResponse(){
     uint8_t send_bytes[SERIAL_NO_RESPONSE_LENGTH] = {0x76};
-    return;
+    uint8_t received_bytes[SERIAL_NO_RESPONSE_LENGTH];
+
+    spi_comms(&received_bytes, &send_bytes, SERIAL_NO_RESPONSE_LENGTH);
+
+    serial_no_response response;
+    
+    response.gen_response = compute_gen(&received_bytes, SERIAL_NO_RESPONSE_LENGTH);
+
+    for (int i = 0; i < sizeof(response.serial_no); i++){
+        response.serial_no[i] = received_bytes[i + 2];
+    }
+
+    return response;
 }
 
 speed_response br10_getSpeedResponse(){

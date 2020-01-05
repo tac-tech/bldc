@@ -59,9 +59,18 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg){
     is_running = true;
     while(!stop_now) {
         // Get the current encoder value
-        gen_response response = br10_getGeneralResponse();
-        commands_printf("Error: %d, Warning: %d", response.isError, response.isWarning);
-        commands_printf("Position: %f \n", response.position);
+        detailed_status response = br10_getDetailedStatusResponse();
+        commands_printf("Too Close: %d", response.isSignalAmplitudeHigh);
+        commands_printf("Too Far: %d", response.isSignalAmplitudeLow);
+        commands_printf("Temp: %d", response.isTempOutOfRange);
+        commands_printf("Speed too high: %d", response.isSpeedHigh);
+        commands_printf("Multiturn error: %d", response.isMultiturnError);
+        commands_printf("Error: %d, Warning: %d", response.gen_response.isError, response.gen_response.isWarning);
+        commands_printf("Position: %f \n", response.gen_response.position);
+        
+        // gen_response response = br10_getGeneralResponse();
+        // commands_printf("Position: %f", response.position);
+        
         // Calculate PID
 
         // Set motor

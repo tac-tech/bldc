@@ -1,7 +1,7 @@
 #include <math.h>
 
 #include <hal.h>
-// #include <commands.h>
+#include <commands.h>
 
 #include "soft_spi.h"
 #include "br10_sp.h"
@@ -43,8 +43,15 @@ detailed_status br10_getDetailedStatusResponse(){
     spi_comms(&receive_bytes, &send_bytes, DETAILED_STATUS_RESPONSE_LENGTH);
 
     detailed_status response;
-    // response.gen_response.is
-    return;
+    response.gen_response = compute_gen(&receive_bytes, DETAILED_STATUS_RESPONSE_LENGTH);
+    
+    response.isSignalAmplitudeHigh  = 0b10000000 & receive_bytes[2];
+    response.isSignalAmplitudeLow   = 0b01000000 & receive_bytes[2];
+    response.isTempOutOfRange       = 0b00100000 & receive_bytes[2];
+    response.isSpeedHigh            = 0b00010000 & receive_bytes[2];
+    response.isMultiturnError       = 0b00001000 & receive_bytes[2];
+
+    return response;
 }
 
 static gen_response compute_gen(uint8_t *received_bytes, int length){
@@ -52,8 +59,8 @@ static gen_response compute_gen(uint8_t *received_bytes, int length){
     response.isError =   !(0b00000010 & received_bytes[1]);
     response.isWarning = !(0b00000001 & received_bytes[1]);
 
-    response.position =  ((uint16_t)((received_bytes[0] << 6) | 
-                                ((received_bytes[0] & 0b11111100) >> 2)))
+    response.position =  ((double)((received_bytes[0] << 6) | 
+                                ((received_bytes[1] & 0b11111100) >> 2)))
                                 * 360.0 / powf(2, 14);
     response.crc = received_bytes[length - 1];
     return response;

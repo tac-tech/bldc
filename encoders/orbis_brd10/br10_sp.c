@@ -90,6 +90,27 @@ detailed_status br10_getDetailedStatusResponse(){
     return response;
 }
 
+void br10_setAsZeroPosition(double position, bool save){
+
+    uint8_t send_bytes[7] = {0xCD, 0xEF, 0x89, 0xAB, 0x5A};
+    uint8_t save_command[5] = {0xCD, 0xEF, 0x89, 0xAB, 0x63};
+
+    uint8_t received_bytes[];
+
+    if (position > 360 || position < 0){
+        commands_printf("position out of bounds");
+        return;
+    }
+
+    uint16_t raw_pos = position * (pow(2, 14) - 1) / 360;
+
+    // spi_comms(&send_bytes, &received_bytes, 7);
+    if (save){
+        // spi_comms(&save_command, &received_bytes, 5);
+    }
+}
+
+
 static gen_response compute_gen(uint8_t *received_bytes, int length){
     gen_response response;
     response.isError =   !(0b00000010 & received_bytes[1]);

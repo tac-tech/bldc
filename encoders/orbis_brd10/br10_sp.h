@@ -34,11 +34,13 @@ typedef struct {
     bool isMultiturnError;
 } detailed_status;
 
+// Public Functions
 gen_response br10_getGeneralResponse();
 serial_no_response br10_getSerialNoResponse();
 speed_response br10_getSpeedResponse();
 temp_response br10_getTempResponse();
 detailed_status br10_getDetailedStatusResponse();
+void br10_setAsZeroPosition(bool save);
 
 // Private Functions
 static gen_response compute_gen(uint8_t *received_bytes, int length);

@@ -41,6 +41,8 @@ temp_response br10_getTempResponse();
 detailed_status br10_getDetailedStatusResponse();
 
 // Private Functions
+static gen_response compute_gen(uint8_t *received_bytes, int length);
 static void spi_comms(uint8_t *receive_bytes, uint8_t *send_bytes, int length);
+// TODO: Implement crc checking function
 
 #endif // ORBIS_BR10_SP_H

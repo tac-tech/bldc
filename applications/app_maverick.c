@@ -59,9 +59,9 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg){
     is_running = true;
     while(!stop_now) {
         // Get the current encoder value
-        serial_no_response response = br10_getSerialNoResponse();
-        commands_printf("Serial Number: %s \n", response.serial_no);
-        commands_printf("Position: %f \n", response.gen_response.position);
+        gen_response response = br10_getGeneralResponse();
+        // commands_printf("Serial Number: %s \n", response.serial_no);
+        commands_printf("Position: %f \n", response.position);
         
         // gen_response response = br10_getGeneralResponse();
         // commands_printf("Position: %f", response.position);
@@ -71,7 +71,7 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg){
         // Set motor
 
         // Thread sleep
-        chThdSleepMilliseconds(100);
+        chThdSleepMilliseconds(190);
         timeout_reset();
     }
     is_running = false;

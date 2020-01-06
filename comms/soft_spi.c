@@ -67,6 +67,10 @@ void spi_init(){
                     PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
     palSetPadMode(SPI_CS_GPIO, SPI_CS_PIN,
                     PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
+
+	// Set pins in default state
+	SET_SPI_CS(1); 
+	SET_SPI_CLK(0);
 }
 
 void spi_deinit(){

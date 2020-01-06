@@ -108,23 +108,26 @@ detailed_status br10_getDetailedStatusResponse(){
     return response;
 }
 
-void br10_setAsZeroPosition(double position, bool save){
+void br10_setZeroPosition(double position, bool save){
 
-    uint8_t send_bytes[7] = {0xCD, 0xEF, 0x89, 0xAB, 0x5A};
+    uint8_t send_bytes[9] = {0xCD, 0xEF, 0x89, 0xAB, 0x5A};
+    uint8_t receive_bytes[9];
     uint8_t save_command[5] = {0xCD, 0xEF, 0x89, 0xAB, 0x63};
+    // uint8_t receive_bytes_save[5];
 
-    // uint8_t received_bytes[];
-
-    if (position > 360 || position < 0){
+    if (position >= 360 || position < 0){
         commands_printf("position out of bounds");
         return;
     }
 
     uint16_t raw_pos = position * (pow(2, 14) - 1) / 360;
 
-    // spi_comms(&send_bytes, &received_bytes, 7);
+    send_bytes[7] = (uint8_t)((raw_pos & 0b1111111100000000) >> 8);
+    send_bytes[8] = (uint8_t)(raw_pos & 0b0000000011111111);
+
+    spi_comms(&receive_bytes, &send_bytes, 9);
     if (save){
-        // spi_comms(&save_command, &received_bytes, 5);
+        spi_comms(&receive_bytes, &save_command, 5);
     }
 }
 
@@ -174,7 +177,7 @@ static gen_response compute_gen(uint8_t *received_bytes, int length){
                                 ((received_bytes[1] & 0b11111100) >> 2)))
                                 * 360.0 / powf(2, 14);
     response.crc = received_bytes[length - 1];
-    check_crc(received_bytes, length);
+    // check_crc(received_bytes, length);
 
     // commands_printf("Calculated CRC: %d", );
 

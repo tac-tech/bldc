@@ -40,7 +40,7 @@ serial_no_response br10_getSerialNoResponse();
 speed_response br10_getSpeedResponse();
 temp_response br10_getTempResponse();
 detailed_status br10_getDetailedStatusResponse();
-void br10_setAsZeroPosition(double position, bool save);
+void br10_setZeroPosition(double position, bool save);
 
 // Private Functions
 static bool check_crc(uint8_t *input_data, int length);

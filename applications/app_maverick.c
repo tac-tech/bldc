@@ -14,7 +14,10 @@
 // Private variables
 static volatile app_configuration config;
 static volatile maverick_motor_type motor_type;
-static volatile bool is_running = false;
+
+static volatile bool drive_isRunning = false;
+static volatile bool steering_comms_isRunning = false;
+static volatile bool steering_controls_isRunning = false;
 static volatile bool stop_now = true;
 
 // Define Threads
@@ -29,26 +32,26 @@ static THD_WORKING_AREA(maverick_steering_controls_thread_wa, 2048);
 static THD_FUNCTION(maverick_drive_thread, arg){
     (void)arg;
     chRegSetThreadName("MAVERICK_DRIVE");
-    is_running = true;
+    drive_isRunning = true;
     commands_printf("Drive thread started!");
     while (!stop_now){
         chThdSleepMilliseconds(50);
         timeout_reset();
     }
     commands_printf("Drive thread finished!");
-    is_running = false;
+    drive_isRunning = false;
 }
 
 static THD_FUNCTION(maverick_steering_comms_thread, arg){
     (void)arg;
     chRegSetThreadName("MAVERICK_STEERING_COMMS");
-    is_running = true;
+    steering_comms_isRunning = true;
     while (!stop_now){
 
         chThdSleepMilliseconds(50);
         timeout_reset();
     }
-    is_running = false;
+    steering_comms_isRunning = false;
 }
 
 static THD_FUNCTION(maverick_steering_controls_thread, arg){
@@ -56,7 +59,7 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg){
     chRegSetThreadName("MAVERICK_STEERING_CONTROLS");
     spi_init();
     // commands_printf("Microseconds per clock ticks: %");
-    is_running = true;
+    steering_controls_isRunning = true;
 
     while(!stop_now) {
         // Get the current encoder value
@@ -69,7 +72,7 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg){
         chThdSleepMilliseconds(190);
         timeout_reset();
     }
-    is_running = false;
+    steering_controls_isRunning = false;
     spi_deinit();
 }
 
@@ -113,7 +116,9 @@ void maverick_init(app_configuration *config){
 void maverick_stop() {
     motor_type = NONE;
     stop_now = true;
-    while (is_running){
+    while ( drive_isRunning && 
+            steering_comms_isRunning &&
+            steering_controls_isRunning){
         chThdSleepMilliseconds(10);
     }
 }

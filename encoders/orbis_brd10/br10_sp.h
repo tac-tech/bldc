@@ -147,8 +147,6 @@ void br10_setZeroPosition(double position, bool save);
  * @brief   Check CRC for data integrity  
  * @details Computes CRC (cyclic redundancy check) of incoming data and compares it with
  *          CRC value outputed by the encoder
- * @warning CRC calculation is valid, but encoder is not outputing valid CRCs
- *          This function should NOT be used until it is verified
  * @param   [uint8_t *] Pointer to array where input data lies
  * @param   [int] length of the input_data array
  * @return  [bool] True if input_data is valid, false if it is not

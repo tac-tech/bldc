@@ -30,6 +30,7 @@ uint8_t crc_lookup_table[256] = {
 0x10, 0x87, 0xA9, 0x3E, 0xF5, 0x62, 0x4C, 0xDB, 0x4D, 0xDA, 0xF4, 0x63, 0xA8, 0x3F, 0x11, 0x86,
 0xAA, 0x3D, 0x13, 0x84, 0x4F, 0xD8, 0xF6, 0x61, 0xF7, 0x60, 0x4E, 0xD9, 0x12, 0x85, 0xAB, 0x3C};
 
+
 gen_response br10_getGeneralResponse(){
     uint8_t send_bytes[GEN_RESPONSE_LENGTH] = {0};
     uint8_t receive_bytes[GEN_RESPONSE_LENGTH];
@@ -159,14 +160,7 @@ static bool check_crc(uint8_t *input_data, int length){
     }
     uint8_t calculated_crc = crc_lookup_table[index];
 
-    commands_printf("Hex at CRC method: %#x %#x %#x", input_data[0], input_data[1], input_data[2]);
-
-    commands_printf("Calculated CRC: %d", CRC_Buffer(length, input_data));
-
-    commands_printf("My  Calculated CRC: %d", calculated_crc);
-
-    commands_printf("Actual CRC: %d", input_data[length - 1]);
-    return true;
+    return calculated_crc == ~input_data[length - 1];
 }
 
 static gen_response compute_gen(uint8_t *received_bytes, int length){
@@ -177,12 +171,7 @@ static gen_response compute_gen(uint8_t *received_bytes, int length){
     response.position =  ((double)((received_bytes[0] << 6) | 
                                 ((received_bytes[1] & 0b11111100) >> 2)))
                                 * 360.0 / powf(2, 14);
-    response.crc = received_bytes[length - 1];
-    // check_crc(received_bytes, length);
-
-    // commands_printf("Calculated CRC: %d", );
-
-    // commands_printf("Received_CRC: %d", response.crc);
+    response.crcCheck = check_crc(received_bytes, length);
 
     return response;
 }
@@ -194,18 +183,3 @@ static void spi_comms(uint8_t *receive_bytes, uint8_t *send_bytes, int length){
     spi_end();
     spi_delay(100); // Pause time after CS is deactivated
 }
-
-uint8_t crc8_4B(uint32_t w_InputData){  
-    uint8_t b_Index = 0;
-    uint8_t b_CRC = 0;  
-    b_Index = (uint8_t)((w_InputData >> 24u) & 0x000000FFu);
-    b_CRC = (uint8_t)((w_InputData >> 16u) & 0x000000FFu);
-    b_Index = b_CRC ^ crc_lookup_table[b_Index];
-    b_CRC = (uint8_t)((w_InputData >> 8u) & 0x000000FFu);
-    b_Index = b_CRC ^ crc_lookup_table[b_Index];
-    b_CRC = (uint8_t)(w_InputData & 0x000000FFu);
-    b_Index = b_CRC ^ crc_lookup_table[b_Index];
-    b_CRC = crc_lookup_table[b_Index];
-    return b_CRC;
-} 
-

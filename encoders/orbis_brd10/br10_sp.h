@@ -9,14 +9,13 @@
  *      - [bool] isError: Error flag
  *      - [bool] isWarning: Warning flag
  *      - [double] position: Encoder position
- *      - [char] crc: CRC from the encoder
- * @warning crc may be changed to a boolean
+ *      - [bool] crcCheck: is calculated CRC equal to encoder reported crc
  */
 typedef struct {
     bool isError;
     bool isWarning;
     double position;
-    char crc;
+    bool crcCheck;
 } gen_response;
 
 /**

@@ -109,7 +109,8 @@ detailed_status br10_getDetailedStatusResponse(){
 }
 
 void br10_setZeroPosition(double position, bool save){
-
+    // This function is correctly implemented, and verified with a logic analyzer.
+    // However, the encoder is not responding to this command. 
     uint8_t send_bytes[9] = {0xCD, 0xEF, 0x89, 0xAB, 0x5A};
     uint8_t receive_bytes[9];
     uint8_t save_command[5] = {0xCD, 0xEF, 0x89, 0xAB, 0x63};

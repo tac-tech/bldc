@@ -58,12 +58,9 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg){
     // commands_printf("Microseconds per clock ticks: %");
     is_running = true;
 
-    br10_setZeroPosition(90, true);
     while(!stop_now) {
         // Get the current encoder value
         gen_response response = br10_getGeneralResponse();
-        commands_printf("Position: %f \n", response.position);
-
         // Calculate PID
 
         // Set motor

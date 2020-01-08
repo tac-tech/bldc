@@ -155,7 +155,6 @@ static bool check_crc(uint8_t *input_data, int length){
     // Calculate CRC
     index = input_data[0];
     for (int i = 1; i < length - 1; i++){
-        commands_printf("%d", index);
         index = input_data[i] ^ crc_lookup_table[index];
     }
     uint8_t calculated_crc = crc_lookup_table[index];

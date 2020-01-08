@@ -20,6 +20,11 @@ static volatile bool steering_comms_isRunning = false;
 static volatile bool steering_controls_isRunning = false;
 static volatile bool stop_now = true;
 
+// Steering Thread mutexes + variables
+static mutex_t steering_pos_mtx;
+static bool is_mtx_setup = false;
+static double steering_pos = -1.0;
+
 // Define Threads
 static THD_FUNCTION(maverick_drive_thread, arg);
 static THD_WORKING_AREA(maverick_drive_thread_wa, 2048);
@@ -48,9 +53,14 @@ static THD_FUNCTION(maverick_steering_comms_thread, arg){
     steering_comms_isRunning = true;
     while (!stop_now){
 
-        chThdSleepMilliseconds(50);
+        chMtxLock(&steering_pos_mtx);
+        commands_printf("Comms Position: %f", steering_pos);
+        chMtxUnlock(&steering_pos_mtx);
+
+        chThdSleepMilliseconds(500);
         timeout_reset();
     }
+    chMtxUnlockAll();
     steering_comms_isRunning = false;
 }
 
@@ -64,16 +74,27 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg){
     while(!stop_now) {
         // Get the current encoder value
         gen_response response = br10_getGeneralResponse();
+        if (!response.crcCheck){
+            // TODO: Add condition if crcCheck is bad
+            // continue;
+        }
+        if (chMtxTryLock(&steering_pos_mtx)){
+            steering_pos = response.position;
+            commands_printf("Controls Position: %f", steering_pos);
+            chMtxUnlock(&steering_pos_mtx);
+        }
         // Calculate PID
 
         // Set motor
 
         // Thread sleep
-        chThdSleepMilliseconds(190);
+        // TODO: replace with sleep unil to better control speed of cycle
+        chThdSleepMilliseconds(100);
         timeout_reset();
     }
     steering_controls_isRunning = false;
     spi_deinit();
+    chMtxUnlockAll();
 }
 
 void maverick_configure(app_configuration *conf){
@@ -102,8 +123,15 @@ void maverick_init(app_configuration *config){
         case STEERING:
             commands_printf("Steering");
             stop_now = false;
-            // chThdCreateStatic(maverick_steering_comms_thread_wa, sizeof(maverick_steering_comms_thread_wa),
-            //                 NORMALPRIO, maverick_steering_comms_thread, NULL);
+            // Initialize the mutexes
+            if (!is_mtx_setup) {
+                chMtxObjectInit(&steering_pos_mtx);
+                is_mtx_setup = true;
+            }
+
+            // Start threads
+            chThdCreateStatic(maverick_steering_comms_thread_wa, sizeof(maverick_steering_comms_thread_wa),
+                            NORMALPRIO, maverick_steering_comms_thread, NULL);
             chThdCreateStatic(maverick_steering_controls_thread_wa, sizeof(maverick_steering_controls_thread_wa),
                             NORMALPRIO, maverick_steering_controls_thread, NULL);
             break;
@@ -121,4 +149,7 @@ void maverick_stop() {
             steering_controls_isRunning){
         chThdSleepMilliseconds(10);
     }
+
+    // Deinit mutexes
+    // &steering_pos_mtx = NULL;
 }

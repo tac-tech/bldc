@@ -91,20 +91,20 @@ temp_response br10_getTempResponse(){
     return response;
 }
 
-detailed_status br10_getDetailedStatusResponse(){
+detailed_status_response br10_getDetailedStatusResponse(){
     uint8_t send_bytes[DETAILED_STATUS_RESPONSE_LENGTH] = {0x64};
     uint8_t receive_bytes[DETAILED_STATUS_RESPONSE_LENGTH];
 
     spi_comms(&receive_bytes, &send_bytes, DETAILED_STATUS_RESPONSE_LENGTH);
 
-    detailed_status response;
+    detailed_status_response response;
     response.gen_response = compute_gen(&receive_bytes, DETAILED_STATUS_RESPONSE_LENGTH);
     
-    response.isSignalAmplitudeHigh  = 0b10000000 & receive_bytes[2];
-    response.isSignalAmplitudeLow   = 0b01000000 & receive_bytes[2];
-    response.isTempOutOfRange       = 0b00100000 & receive_bytes[2];
-    response.isSpeedHigh            = 0b00010000 & receive_bytes[2];
-    response.isMultiturnError       = 0b00001000 & receive_bytes[2];
+    response.status.isSignalAmplitudeHigh  = 0b10000000 & receive_bytes[2];
+    response.status.isSignalAmplitudeLow   = 0b01000000 & receive_bytes[2];
+    response.status.isTempOutOfRange       = 0b00100000 & receive_bytes[2];
+    response.status.isSpeedHigh            = 0b00010000 & receive_bytes[2];
+    response.status.isMultiturnError       = 0b00001000 & receive_bytes[2];
 
     return response;
 }

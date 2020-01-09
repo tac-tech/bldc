@@ -1,6 +1,8 @@
 #ifndef APP_MAVERICK_H_
 #define APP_MAVERICK_H_
 
+#include "soft_spi.h"
+
 typedef enum {
     NONE,
     DRIVE, 

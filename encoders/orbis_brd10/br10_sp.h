@@ -4,6 +4,23 @@
 #include <hal.h>
 
 /**
+ * @brief   Detailed status struct
+ * @details Struct containing detailed status message. Contains the following:
+ *      - [bool] isSignalAmplitudeHigh: True if encoder is too close to magnet
+ *      - [bool] isSignalAmplitudeLow: True if encoder is too far from magnet
+ *      - [bool] isTempOutOfRange: True if temperature is outside operating range
+ *      - [bool] isSpeedHigh: True if speed is too high for encoder to read
+ *      - [bool] isMultiturnError: True if there is a multiturn error (if encoder has multiturn feature)
+ */
+typedef struct {
+    bool isSignalAmplitudeHigh;
+    bool isSignalAmplitudeLow;
+    bool isTempOutOfRange;
+    bool isSpeedHigh;
+    bool isMultiturnError;
+} detailed_status;
+
+/**
  * @brief   General Response struct
  * @details Contains the following:
  *      - [bool] isError: Error flag
@@ -22,7 +39,7 @@ typedef struct {
  * @brief   Serial Number Response struct
  * @details Contains Serial Number + general response:
  *      - [gen_response] gen_response: General Response (see gen_response struct)
- *      - [char] serial_no: 6 character/byte serial number
+ *      - [char] serial_no: 6 character/byte serial number in ASCII
  */
 typedef struct {
     gen_response gen_response;
@@ -55,20 +72,12 @@ typedef struct {
  * @brief   Detailed status struct
  * @details Contains flags showing detailed status of the encoder:
  *      - [gen_response] gen_response: General Response (see gen_response struct)
- *      - [bool] isSignalAmplitudeHigh: True if encoder is too close to magnet
- *      - [bool] isSignalAmplitudeLow: True if encoder is too far from magnet
- *      - [bool] isTempOutOfRange: True if temperature is outside operating range
- *      - [bool] isSpeedHigh: True if speed is too high for encoder to read
- *      - [bool] isMultiturnError: True if there is a multiturn error (if encoder has multiturn feature)
+ *      - [detailed_status] status: Detailed status (see detailed_stats struct)
  */
 typedef struct {
     gen_response gen_response;
-    bool isSignalAmplitudeHigh;
-    bool isSignalAmplitudeLow;
-    bool isTempOutOfRange;
-    bool isSpeedHigh;
-    bool isMultiturnError;
-} detailed_status;
+    detailed_status status;
+} detailed_status_response;
 
 ////////////////////////////////////////////
 // ---------- Public Functions ---------- //
@@ -125,9 +134,9 @@ temp_response br10_getTempResponse();
  *              - Temperature is out of range
  *              - Speed is too high
  *              - Multiturn error (only if using multiturn encoder)
- * @return  [detailed_status] struct with interperated data
+ * @return  [detailed_status_response] struct with interperated data
  */
-detailed_status br10_getDetailedStatusResponse();
+detailed_status_response br10_getDetailedStatusResponse();
 
 /**
  * @brief   Set zero position of encoder

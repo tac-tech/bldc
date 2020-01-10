@@ -66,7 +66,12 @@ static THD_FUNCTION(maverick_steering_comms_thread, arg){
 
         // Testing switching commands
         next_cmd.cmd = NONE;
-        next_cmd.cmd_position = steering_pid.angle_division;
+        if (next_cmd.cmd_position == 45){
+            next_cmd.cmd_position = 270;
+        } else {
+            next_cmd.cmd_position = 90;
+        }
+        // next_cmd.cmd_position = steering_pid.angle_division;
         chMtxLock(&steering_cmd_mtx);
         latest_steering_cmd = next_cmd;
         chMtxUnlock(&steering_cmd_mtx);
@@ -96,7 +101,7 @@ static THD_FUNCTION(maverick_steering_comms_thread, arg){
 
 
         timeout_reset();
-        chThdSleepMilliseconds(1000);
+        chThdSleepMilliseconds(5000);
     }
     chMtxUnlockAll();
     steering_comms_isRunning = false;

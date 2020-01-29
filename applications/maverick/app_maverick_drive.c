@@ -2,8 +2,7 @@
 #include "app_maverick_gen.h"
 #include "maverick/app_maverick_drive.h"
 
-void maverick_drive(arg){
-    (void)arg;
+void maverick_drive(){
     chRegSetThreadName("MAVERICK_DRIVE");
     drive_isRunning = true;
     commands_printf("Drive thread started!");

@@ -2,8 +2,7 @@
 #include "app_maverick_gen.h"
 #include "app_maverick_steeringcomms.h"
 
-void maverick_steeringcomms( arg){
-    (void)arg;
+void maverick_steering_comms(){
     chRegSetThreadName("MAVERICK_STEERING_COMMS");
     steering_comms_isRunning = true;
     steering_commands last_cmd = NONE;

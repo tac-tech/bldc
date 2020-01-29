@@ -4,8 +4,7 @@
 #include "app_maverick_gen.h"
 
 
-void maverick_steeringcontrols(arg){
-    (void) arg;
+void maverick_steering_controls(){
     chRegSetThreadName("MAVERICK_STEERING_CONTROLS");
     spi_init();
     // commands_printf("Microseconds per clock ticks: %");

@@ -22,15 +22,18 @@ static THD_FUNCTION(maverick_steering_controls_thread, arg);
 static THD_WORKING_AREA(maverick_steering_controls_thread_wa, 2048);
 
 static THD_FUNCTION(maverick_drive_thread, arg){
-    // maverick_drive(arg);
+    commands_printf("Maverick Drive");
+    maverick_drive();
 }
 
 static THD_FUNCTION(maverick_steering_comms_thread, arg){
-    // maverick_steering_comms(arg);
+    commands_printf("Maverick Steering Comms");
+    // maverick_steering_comms();
 }
 
 static THD_FUNCTION(maverick_steering_controls_thread, arg){
-    // maverick_steering_controls(arg);
+    commands_printf("Maverick Steering Controls");
+    // maverick_steering_controls();
 }
 
 void maverick_configure(app_configuration *conf){

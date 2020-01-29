@@ -28,12 +28,12 @@ static THD_FUNCTION(maverick_drive_thread, arg){
 
 static THD_FUNCTION(maverick_steering_comms_thread, arg){
     commands_printf("Maverick Steering Comms");
-    // maverick_steering_comms();
+    maverick_steering_comms();
 }
 
 static THD_FUNCTION(maverick_steering_controls_thread, arg){
     commands_printf("Maverick Steering Controls");
-    // maverick_steering_controls();
+    maverick_steering_controls();
 }
 
 void maverick_configure(app_configuration *conf){

@@ -93,7 +93,6 @@ Add udev rules to use the stlink v2 programmer without being root
 
 
 ```bash
-wget vedder.se/Temp/49-stlinkv2.rules
 sudo mv 49-stlinkv2.rules /etc/udev/rules.d/
 sudo udevadm trigger
 ```

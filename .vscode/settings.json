@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "app_maverick_gen.h": "c",
+        "complex": "cpp",
+        "app_maverick_drive.h": "c",
+        "app_maverick_steeringcomms.h": "c",
+        "br10_sp_commands.h": "c",
+        "app_maverick_steeringcontrols.h": "c"
+    }
+}

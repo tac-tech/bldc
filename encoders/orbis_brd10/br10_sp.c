@@ -111,11 +111,10 @@ detailed_status_response br10_getDetailedStatusResponse(){
 
 void br10_setZeroPosition(double position, bool save){
     // This function is correctly implemented, and verified with a logic analyzer.
-    // However, the encoder is not responding to this command. 
-    uint8_t send_bytes[9] = {0xCD, 0xEF, 0x89, 0xAB, 0x5A};
-    uint8_t receive_bytes[9];
+    // However, the encoder is not responding to this command.
+    uint8_t zero_pos_command[9] = {0xCD, 0xEF, 0x89, 0xAB, 0x5A};
+    uint8_t receive_bytes[3];
     uint8_t save_command[5] = {0xCD, 0xEF, 0x89, 0xAB, 0x63};
-    // uint8_t receive_bytes_save[5];
 
     if (position >= 360 || position < 0){
         commands_printf("position out of bounds");
@@ -124,12 +123,22 @@ void br10_setZeroPosition(double position, bool save){
 
     uint16_t raw_pos = position * (pow(2, 14) - 1) / 360;
 
-    send_bytes[7] = (uint8_t)((raw_pos & 0b1111111100000000) >> 8);
-    send_bytes[8] = (uint8_t)(raw_pos & 0b0000000011111111);
+    zero_pos_command[7] = (uint8_t)((raw_pos & 0b1111111100000000) >> 8);
+    zero_pos_command[8] = (uint8_t)(raw_pos & 0b0000000011111111);
 
-    spi_comms(&receive_bytes, &send_bytes, 9);
+    uint8_t next_cmd[4] = {0};
+    for (int i = 0; i < 9; i++){
+        next_cmd[0] = zero_pos_command[i];
+        spi_comms(&receive_bytes, &next_cmd, 4);    
+    }
+    // uint8_t next_cmd2 = {0, 0, zero_pos_command[7], zero_pos_command[8]};
+    // spi_comms(&receive_bytes, &next_cmd2, 4);
+
     if (save){
-        spi_comms(&receive_bytes, &save_command, 5);
+        for (int i = 0; i < 5; i++){
+            next_cmd[0] = save_command[i];
+            spi_comms(&receive_bytes, &next_cmd, 3);
+        }
     }
 }
 

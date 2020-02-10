@@ -1,0 +1,6 @@
+#ifndef APP_MAVERICK_STEERINGCONTROLS_H
+#define APP_MAVERICK_STEERINGCONTROLS_H
+
+void maverick_steering_controls();
+
+#endif // APP_MAVERICK_STEERINGCONTROLS_H
